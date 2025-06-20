@@ -1,4 +1,4 @@
-# tactical_simulator.py — TacticalSimulatorManager Module
+# tactical_simulator_manager.py — Aegis Prime Tactical Simulator Manager
 
 import tkinter as tk
 from tkinter import simpledialog, messagebox
@@ -14,7 +14,7 @@ class TacticalSimulatorManager:
         }
 
     def launch_simulator(self):
-        win = tk.Tk()
+        win = tk.Toplevel()
         win.title("Aegis Tactical Scenario Simulator")
         win.geometry("600x400")
 
@@ -34,11 +34,14 @@ class TacticalSimulatorManager:
             if response:
                 response_var.set(f"Response logged: {response}")
                 vault = self.vault_manager.vault_data
-                vault.setdefault("tactics_log", {})[choice] = response
+                mission = "tactics_log"
+                if mission not in vault:
+                    vault[mission] = {}
+                vault[mission][choice] = response
                 self.vault_manager.save_vault()
                 self.logger.log(f"Tactical response logged: {choice} >> {response}")
 
         tk.Button(win, text="Run Simulation", command=simulate).pack(pady=10)
         tk.Label(win, textvariable=response_var, wraplength=550).pack(pady=20)
         tk.Button(win, text="Close", command=win.destroy).pack(pady=10)
-        win.mainloop()
+        self.logger.log("Tactical Simulator interface launched.")
