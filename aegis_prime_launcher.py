@@ -1,84 +1,95 @@
-# aegis_prime_launcher.py — Aegis Prime Alpha Master Launcher
-
-from logger import AegisLogger
-from vault_manager import MemoryVaultManager
-from directive_manager import DirectiveHierarchyManager
-from voiceprint_manager import VoiceprintManager
-from ambient_monitor import AmbientMonitorManager
-from learning_console import LearningConsoleManager
-from persona_sculptor import PersonaSculptorManager
-from tactical_simulator import TacticalSimulatorManager
-from mission_analyzer import MissionAnalyzerManager
-from loyalty_circuit import LoyaltyCircuitManager
-from sandbox_simulator import SandboxThreatSimulatorManager
-from self_healing import SelfHealingManager
+# === Aegis Prime Sovereign Launcher v2 ===
+# Fully integrated sovereign deployment with all modules active except voice interface temporarily disabled
 
 import tkinter as tk
-import traceback
 
-def main():
-    logger = AegisLogger()
+# Core managers
+from logger import Logger
+from vault_manager import VaultManager
+from directives_manager import DirectivesManager
 
-    # Run Self-Healing at boot
-    self_healer = SelfHealingManager(logger)
-    self_healer.run_full_integrity_check()
+# Core tactical modules
+from tactical_simulator_manager import TacticalSimulatorManager
+from mission_analyzer_manager import MissionAnalyzerManager
+from loyalty_circuit_manager import LoyaltyCircuitManager
+from sandbox_threat_simulator_manager import SandboxThreatSimulatorManager
+from self_healing_manager import SelfHealingManager
 
-    directives_manager = DirectiveHierarchyManager(logger)
-    directives = directives_manager.load_directives()
+# Sovereign cognitive expansion modules
+from tactical_analyzer_gui import TacticalAnalyzerGUI
+from sandbox_simulator_gui import SandboxSimulatorGUI
+from adaptive_learning_engine import AdaptiveLearningEngine
+from conversational_interface import ConversationalInterface
+from diplomacy_engine_v3 import DiplomacyEngineV3
+from external_learning_engine import ExternalLearningEngine
+from cognitive_firewall import CognitiveFirewall
+from commander_dashboard import CommanderDashboard
+from tactical_scenario_generator import TacticalScenarioGenerator
+from system_operator_interface import SystemOperatorInterface
 
-    loyalty_circuit = LoyaltyCircuitManager(logger, directives_manager)
-    try:
-        loyalty_circuit.verify_loyalty_integrity()
-        if loyalty_circuit.check_protocol_frostlock():
-            logger.log("Protocol Frostlock engaged. Halting system.")
-            return
-    except Exception as e:
-        logger.log(f"System halted: {e}")
-        return
+# Commented out voice interface import to disable temporarily
+# from voice_interface_manager import VoiceInterfaceManager
 
-    # Prompt for voice enrollment or verification
-    voice_manager = VoiceprintManager(logger)
-    mode = input("Mode: [boot] | [enroll-voice]: ").strip().lower()
-    if mode == "enroll-voice":
-        voice_manager.record_voice_sample()
-        directives_manager.save_directives()
-        return
-    else:
-        if not voice_manager.verify_voiceprint(directives):
-            logger.log("Voiceprint verification failed. Access denied.")
-            return
+# === Initialize Core Systems ===
 
-    master_password = input("Enter master override password: ").strip()
-    vault_manager = MemoryVaultManager(master_password, logger)
-    vault_manager.initialize_vault()
-    vault_manager.load_vault()
+logger = Logger()
+vault_manager = VaultManager(logger)
+directives_manager = DirectivesManager(logger)
 
-    # Main GUI launcher
-    root = tk.Tk()
-    root.title("Aegis Prime Alpha")
-    root.geometry("400x400")
+# === Initialize Sovereign Modules ===
 
-    # Subsystem managers
-    ambient = AmbientMonitorManager(logger, master_password, vault_manager, directives_manager)
-    learning = LearningConsoleManager(logger, vault_manager)
-    persona = PersonaSculptorManager(logger, directives_manager, vault_manager)
-    tactical = TacticalSimulatorManager(logger, vault_manager)
-    analyzer = MissionAnalyzerManager(logger, vault_manager, directives_manager)
-    sandbox = SandboxThreatSimulatorManager(logger, vault_manager, directives_manager)
+tactical_sim = TacticalSimulatorManager(logger, vault_manager)
+mission_analyzer = MissionAnalyzerManager(logger, vault_manager, directives_manager)
+loyalty_circuit = LoyaltyCircuitManager(logger, directives_manager)
+sandbox_threat_sim = SandboxThreatSimulatorManager(logger, vault_manager, directives_manager)
+self_healer = SelfHealingManager(logger)
 
-    tk.Button(root, text="View Ambient Monitor", command=ambient.launch_dashboard).pack(pady=5)
-    tk.Button(root, text="Launch Learning Console", command=learning.launch_learning_console).pack(pady=5)
-    tk.Button(root, text="Open Persona Sculptor", command=persona.launch_persona_sculptor).pack(pady=5)
-    tk.Button(root, text="Run Tactical Simulator", command=tactical.launch_simulator).pack(pady=5)
-    tk.Button(root, text="Run Tactical Analyzer", command=analyzer.analyze_tactics).pack(pady=5)
-    tk.Button(root, text="Run Sandbox Simulator", command=sandbox.run_sandbox_simulation).pack(pady=5)
-    tk.Button(root, text="Exit", command=root.destroy).pack(pady=20)
+tactical_analyzer = TacticalAnalyzerGUI(logger, vault_manager, directives_manager)
+sandbox_gui = SandboxSimulatorGUI(logger, vault_manager, directives_manager)
+adaptive_learning = AdaptiveLearningEngine(logger, vault_manager, directives_manager)
+conversation_gui = ConversationalInterface(logger, vault_manager, directives_manager)
 
-    root.mainloop()
+# voice_interface = VoiceInterfaceManager(logger, vault_manager, directives_manager)  # Disabled temporarily
 
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception:
-        traceback.print_exc()
-        input("Press Enter to close.")
+diplomacy_engine = DiplomacyEngineV3(logger, vault_manager, directives_manager)
+external_learning = ExternalLearningEngine(logger, vault_manager, directives_manager)
+cognitive_firewall = CognitiveFirewall(logger, vault_manager, directives_manager)
+commander_dashboard = CommanderDashboard(logger, vault_manager, directives_manager, cognitive_firewall)
+scenario_generator = TacticalScenarioGenerator(logger)
+system_operator = SystemOperatorInterface(logger)
+
+# === Launch Sovereign Control Console ===
+
+root = tk.Tk()
+root.title("Aegis Prime Sovereign Control Console")
+root.geometry("600x800")
+
+tk.Label(root, text="Aegis Prime Sovereign AI", font=("Arial", 16, "bold")).pack(pady=10)
+
+# Core operations
+tk.Button(root, text="View Memory Vault", command=vault_manager.launch_vault_viewer).pack(pady=5)
+tk.Button(root, text="Launch Learning Console", command=vault_manager.launch_learning_console).pack(pady=5)
+tk.Button(root, text="Run Tactical Simulator", command=tactical_sim.launch_simulator).pack(pady=5)
+tk.Button(root, text="Run Tactical Analyzer", command=tactical_analyzer.analyze_tactics).pack(pady=5)
+tk.Button(root, text="Run Sandbox Threat Simulator", command=sandbox_gui.launch_gui).pack(pady=5)
+tk.Button(root, text="Run Diplomacy Engine v3", command=diplomacy_engine.launch_diplomacy_gui).pack(pady=5)
+tk.Button(root, text="External Learning Ingestion", command=external_learning.launch_learning_gui).pack(pady=5)
+
+# Cognitive interfaces
+tk.Button(root, text="Open Conversational Interface (Text)", command=conversation_gui.launch_conversation).pack(pady=5)
+
+# Disabled voice interface button temporarily
+# tk.Button(root, text="Activate Voice Interface", command=voice_interface.start_voice_session).pack(pady=5)
+
+# System intelligence
+tk.Button(root, text="Launch Commander Dashboard", command=commander_dashboard.launch_dashboard).pack(pady=5)
+tk.Button(root, text="Generate Tactical Scenario", command=scenario_generator.launch_scenario_gui).pack(pady=5)
+tk.Button(root, text="Run Cognitive Firewall Scan", command=cognitive_firewall.full_firewall_scan).pack(pady=5)
+
+# Operator control
+tk.Button(root, text="Open System Operator Interface", command=system_operator.launch_operator_gui).pack(pady=5)
+
+# Exit button
+tk.Button(root, text="Exit Sovereign Console", command=root.destroy).pack(pady=20)
+
+root.mainloop()
