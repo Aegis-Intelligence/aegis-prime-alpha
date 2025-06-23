@@ -1,36 +1,32 @@
-import tkinter as tk
-import os
+# File: dynamic_perception_matrix.py
 
-# Core managers
-from logger import Logger
-from vault_manager import VaultManager
-from directives_manager import DirectivesManager
+class DynamicPerceptionMatrix:
+    def __init__(self, logger, directives_manager, vault_manager, cognitive_correlation, horizon_predictor, synthetic_directive_matrix):
+        self.logger = logger
+        self.directives_manager = directives_manager
+        self.vault_manager = vault_manager
+        self.cognitive_correlation = cognitive_correlation
+        self.horizon_predictor = horizon_predictor
+        self.synthetic_directive_matrix = synthetic_directive_matrix
+        self.perception_map = {}
 
-# Sovereign Cognitive Core Expansion Module 33
-from dynamic_perception_matrix import DynamicPerceptionMatrix
+    def activate_perception_mapping(self):
+        self.logger.log("[DynamicPerceptionMatrix] Activating dynamic perception matrix construction...")
+        directive_states = self.synthetic_directive_matrix.retrieve_directive_states()
+        horizon_vectors = self.horizon_predictor.generate_future_projections()
 
-# === Initialize Core Systems ===
+        for directive in directive_states:
+            perception_vector = self._generate_perception_vector(directive, horizon_vectors)
+            self.perception_map[directive['id']] = perception_vector
+            self.logger.log(f"[DynamicPerceptionMatrix] Directive {directive['id']} mapped into perception space.")
 
-logger = Logger()
-vault_manager = VaultManager(logger)
-directives_manager = DirectivesManager(logger)
+        self.logger.log("[DynamicPerceptionMatrix] Perception matrix initialization complete.")
 
-# Module 33: Dynamic Perception Matrix
-dynamic_perception_matrix = DynamicPerceptionMatrix(
-    logger, directives_manager, vault_manager
-)
-dynamic_perception_matrix.initialize_perception_matrix()
+    def extract_current_mapping(self):
+        return self.perception_map
 
-# === Sovereign Console Launch ===
-
-root = tk.Tk()
-root.title("Aegis Prime Sovereign AI")
-root.geometry("600x800")
-tk.Label(root, text="Aegis Prime Sovereign AI", font=("Arial", 16, "bold")).pack(pady=10)
-
-tk.Button(root, text="View Memory Vault", command=vault_manager.launch_vault_viewer).pack(pady=5)
-tk.Button(root, text="Launch Learning Console", command=vault_manager.launch_learning_console).pack(pady=5)
-tk.Button(root, text="Run Tactical Simulator", command=lambda: None).pack(pady=5)
-tk.Button(root, text="Exit Sovereign Console", command=root.destroy).pack(pady=20)
-
-root.mainloop()
+    def _generate_perception_vector(self, directive, horizon_vectors):
+        correlation = self.cognitive_correlation.compute_directive_correlation(directive)
+        future_projection = horizon_vectors.get(directive['id'], 0.5)
+        perception_vector = (correlation + future_projection) / 2.0
+        return perception_vector
